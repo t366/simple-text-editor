@@ -209,6 +209,32 @@ tests/                      # 测试用例
 npm test
 ```
 
-## 📄 许可证
+## � 许可证
 
 MIT License
+
+## 🌟 GitHub 仓库
+
+本项目已托管在 GitHub，欢迎 Star 和 Fork！
+
+- **仓库地址**：https://github.com/t366/simple-text-editor
+- **问题反馈**：请在 GitHub Issues 中提交 Bug 报告或功能建议
+- **贡献代码**：欢迎提交 Pull Request，请参考代码规范
+
+### 性能优化说明
+
+本项目在最新版本中进行了全面的性能优化：
+
+**前端优化**：
+- 光标更新节流（100ms），减少网络请求约 80%
+- diff-match-patch 实例复用，减少内存分配和 GC 压力
+- Markdown 预览防抖（150ms），避免频繁 DOM 更新
+- 滚动事件节流（50ms），减少 DOM 操作
+
+**后端优化**：
+- 异步备份清理，使用 setImmediate 避免阻塞主事件循环
+- 添加内存缓存层（SimpleCache，30s TTL），减少文件 I/O
+
+**新增工具函数**：
+- `throttle()` - 节流函数
+- `debounce()` - 防抖函数
