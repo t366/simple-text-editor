@@ -1,0 +1,45 @@
+services:
+  text-editor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    pull_policy: build
+    image: text-editor-server:2.0.0
+    container_name: text-editor-server
+    restart: unless-stopped
+    ports:
+      - "3300:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
+      - CORS_ORIGIN=*
+      - CORS_ALLOW_ALL=true
+      - MAX_USERS=${MAX_USERS:-100}
+      - TZ=Asia/Shanghai
+    volumes:
+      - text-editor-data:/app/data
+      - text-editor-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - text-editor-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  text-editor-data:
+    driver: local
+  text-editor-logs:
+    driver: local
+
+networks:
+  text-editor-network:
+    driver: bridge

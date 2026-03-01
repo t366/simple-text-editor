@@ -1,0 +1,53 @@
+{
+  "name": "real-time-text-editor",
+  "version": "2.0.0",
+  "description": "多端实时同步文本编辑器 - 优化版",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --coverage --config jest.config.js",
+    "test:integration": "node tests/test-simple.js"
+  },
+  "keywords": [
+    "real-time",
+    "collaboration",
+    "editor",
+    "socket.io",
+    "docker"
+  ],
+  "author": "RealTime Editor Team",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csrf-csrf": "^3.0.4",
+    "diff-match-patch": "^1.0.5",
+    "dompurify": "^3.3.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.3",
+    "express-winston": "^4.2.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "marked": "^17.0.1",
+    "moment": "^2.29.4",
+    "rate-limiter-flexible": "^4.0.0",
+    "sanitize-html": "^2.17.0",
+    "socket.io": "^4.8.3",
+    "uuid": "^9.0.0",
+    "validator": "^13.15.26",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.1",
+    "jest-environment-jsdom": "^30.2.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

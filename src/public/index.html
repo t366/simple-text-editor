@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简记 · 实时协作编辑器</title>
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="navbar">
+            <div class="brand">
+                <span class="logo">📝</span>
+                <span class="brand-text">简记 · 实时协作编辑器</span>
+            </div>
+            <div class="status-badge">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="connectionStatus">正在连接...</span>
+            </div>
+        </nav>
+        
+        <main class="main-content">
+            <div class="dashboard-grid">
+                <div class="editor-card">
+                    <div class="editor-header">
+                        <h2>编辑区域</h2>
+                        <div class="online-count">
+                            <span>在线用户</span>
+                            <span class="online-badge" id="userCount">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs-container" role="tablist" aria-label="文档标签页">
+                        <div class="tabs-wrapper" id="tabsWrapper">
+                            <div class="tabs-list" id="tabsList" role="presentation">
+                                <div class="tab active" data-tab-id="tab-1" role="tab" aria-selected="true" aria-controls="panel-tab-1" tabindex="0">
+                                    <span class="tab-title" title="未命名文档">未命名文档</span>
+                                    <button class="tab-close" title="关闭标签页 (Ctrl+W)" aria-label="关闭未命名文档标签页">×</button>
+                                </div>
+                            </div>
+                            <button class="new-tab-btn" id="newTabBtn" title="新建标签页 (Ctrl+T)" aria-label="新建标签页">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-toolbar" role="toolbar" aria-label="文本格式化工具栏">
+                        <div class="toolbar-main">
+                            <button class="toolbar-btn" id="formatBold" title="粗体 (Ctrl+B)" aria-label="粗体格式" aria-keyshortcuts="Ctrl+B">
+                                <strong>B</strong>
+                            </button>
+                            <button class="toolbar-btn" id="formatItalic" title="斜体 (Ctrl+I)" aria-label="斜体格式" aria-keyshortcuts="Ctrl+I">
+                                <em>I</em>
+                            </button>
+                            <button class="toolbar-btn" id="formatUnderline" title="下划线 (Ctrl+U)" aria-label="下划线格式" aria-keyshortcuts="Ctrl+U">
+                                <u>U</u>
+                            </button>
+                            <button class="toolbar-btn" id="formatUl" title="无序列表" aria-label="无序列表">
+                                • 列表
+                            </button>
+                            <button class="toolbar-btn" id="formatOl" title="有序列表" aria-label="有序列表">
+                                1. 列表
+                            </button>
+                            <button class="toolbar-btn toolbar-toggle" id="toggleToolbarBtn" title="显示更多功能" aria-label="展开更多格式化选项" aria-expanded="false">
+                                ⋯
+                            </button>
+                        </div>
+                        <div class="toolbar-advanced" aria-hidden="true">
+                            <div class="toolbar-separator" role="separator"></div>
+                            <button class="toolbar-btn" id="formatStrikethrough" title="删除线" aria-label="删除线格式">
+                                <s>S</s>
+                            </button>
+                            <button class="toolbar-btn" id="formatH1" title="标题 1" aria-label="一级标题">
+                                H1
+                            </button>
+                            <button class="toolbar-btn" id="formatH2" title="标题 2" aria-label="二级标题">
+                                H2
+                            </button>
+                            <button class="toolbar-btn" id="formatH3" title="标题 3" aria-label="三级标题">
+                                H3
+                            </button>
+                            <div class="toolbar-separator" role="separator"></div>
+                            <button class="toolbar-btn" id="formatQuote" title="引用" aria-label="引用格式">
+                                ">" 引用
+                            </button>
+                            <button class="toolbar-btn" id="formatCode" title="代码" aria-label="代码格式">
+                                &lt;/&gt; 代码
+                            </button>
+                            <button class="toolbar-btn" id="formatLink" title="链接" aria-label="插入链接">
+                                🔗 链接
+                            </button>
+                            <button class="toolbar-btn" data-action="time" title="插入时间" aria-label="插入当前时间">
+                                <span>🕒</span> 时间
+                            </button>
+                            <div class="toolbar-separator" role="separator"></div>
+                            <button class="toolbar-btn toggle-preview" id="togglePreviewBtn" title="切换Markdown预览" aria-label="切换Markdown预览" aria-pressed="false">
+                                <span>👁️</span> 预览
+                            </button>
+                        </div>
+                    </div>
+                    <div class="editor-body">
+                        <div class="editor-containers" id="editorContainers">
+                            <div class="editor-container active" data-container-id="tab-1" role="tabpanel" id="panel-tab-1" aria-labelledby="tab-tab-1">
+                                <label for="textEditor" class="sr-only">文档编辑区域</label>
+                                <textarea 
+                                    class="text-editor" 
+                                    id="textEditor" 
+                                    placeholder="开始输入...所有更改将实时同步到所有连接的设备"
+                                    spellcheck="true"
+                                    aria-label="文档编辑区域"
+                                    aria-multiline="true"
+                                ></textarea>
+                                <div class="preview-panel" id="previewPanel" aria-label="Markdown预览" aria-live="polite"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="editor-actions" role="group" aria-label="编辑操作按钮">
+                        <button class="btn" id="saveBtn" title="保存到本地文件" aria-label="保存文档到本地">
+                            <span>💾</span>
+                            <span>保存</span>
+                        </button>
+                        <button class="btn" id="clearBtn" title="清空所有内容" aria-label="清空文档内容">
+                            <span>🗑️</span>
+                            <span>清空</span>
+                        </button>
+                        <button class="btn" id="copyBtn" title="复制全部文本" aria-label="复制全部文本到剪贴板">
+                            <span>📋</span>
+                            <span>复制</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card" id="sidebar" role="complementary" aria-label="在线用户和帮助信息">
+                    <div class="sidebar-header">
+                        <h2 id="users-heading">在线用户</h2>
+                    </div>
+                    <div class="users-section" aria-labelledby="users-heading">
+                        <ul class="user-list" id="usersList" role="list" aria-label="在线用户列表">
+                        </ul>
+                    </div>
+                    <div class="help-section">
+                        <h3 id="help-heading">
+                            <span>💡</span>
+                            <span>使用说明</span>
+                        </h3>
+                        <ul class="help-list" aria-labelledby="help-heading">
+                            <li>实时同步：所有更改立即同步到其他设备</li>
+                            <li>多端支持：手机、平板、电脑均可使用</li>
+                            <li>无需注册：打开即用，自动生成昵称</li>
+                            <li>数据持久：刷新页面不会丢失内容</li>
+                            <li class="desktop-only">键盘快捷键：Ctrl+S 保存，Ctrl+D 清空</li>
+                            <li class="mobile-only">移动端：点击工具栏按钮快速格式化</li>
+                            <li class="mobile-only">点击右上角图标显示/隐藏在线用户</li>
+                            <li class="mobile-only">双击保存，三击清空（实验性功能）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="notification-container" id="notificationContainer" role="alert" aria-live="polite" aria-label="系统通知"></div>
+    
+    <div class="fab-container" role="group" aria-label="快捷操作按钮">
+        <button class="floating-btn secondary" title="保存文档" aria-label="保存文档">
+            💾
+        </button>
+        <button class="floating-btn" id="scrollTopBtn" title="回到顶部" aria-label="滚动到页面顶部">
+            ↑
+        </button>
+    </div>
+    
+    <div class="progress-container" id="progressContainer" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="操作进度">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="confirm-dialog-overlay" id="confirmDialogOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogMessage">
+        <div class="confirm-dialog" id="confirmDialog">
+            <div class="confirm-dialog-header">
+                <h3 id="confirmDialogTitle">确认操作</h3>
+            </div>
+            <div class="confirm-dialog-content">
+                <div class="confirm-dialog-icon" id="confirmDialogIcon" aria-hidden="true">⚠️</div>
+                <p id="confirmDialogMessage">确定要执行此操作吗？</p>
+            </div>
+            <div class="confirm-dialog-actions">
+                <button class="btn btn-secondary" id="confirmDialogCancel">取消</button>
+                <button class="btn btn-danger" id="confirmDialogConfirm">确定</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/libs/socket.io.min.js"></script>
+    <script src="js/libs/diff-match-patch.js"></script>
+    <script src="js/libs/marked.min.js"></script>
+    <script src="js/libs/purify.min.js"></script>
+    <script type="module" src="/js/modules/app.js"></script>
+</body>
+</html>
